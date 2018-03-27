@@ -52,7 +52,7 @@ database.ref().on("child_added", function (snapshot) {
    
 
     var diffTime = moment().diff(moment(formattedTime), "minutes");
-    var remainder = (diffTime - 880) % frequency;
+    var remainder = (diffTime % frequency);
     var minutesAway = frequency - remainder;
     console.log(minutesAway);
 
