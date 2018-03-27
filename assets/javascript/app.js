@@ -1,3 +1,4 @@
+// Firebase data
 var config = {
     apiKey: "AIzaSyCEkaPMTXIXWUMpktD08z7ZR5TVh6cNeXw",
     authDomain: "project-1-25453.firebaseapp.com",
@@ -13,10 +14,10 @@ var database = firebase.database();
 $("#addTrain").on("click", function (event) {
     event.preventDefault();
 
-// Get user data
+    // Gets user data
     var name = $("#trainName").val().trim();
     var destination = $("#destination").val().trim();
-    var time = moment($("#firstTrainTime").val().trim(), "DD/MM/YY").format("X");
+    var time = moment($("#firstTrainTime").val().trim(), "HH:MM").format("X");
     var frequency = $("#frequency").val().trim();
 
 
@@ -27,9 +28,10 @@ $("#addTrain").on("click", function (event) {
         frequency: frequency
     };
 
+
     database.ref().push(addTrain);
 
-// Clear boxes
+    // Clear boxes
     $("#trainName").val("");
     $("#destination").val("");
     $("#firstTrainTime").val("");
@@ -38,29 +40,29 @@ $("#addTrain").on("click", function (event) {
 });
 
 // User adds an entry
-    database.ref().on("child_added", function (snapshot) {
+database.ref().on("child_added", function (snapshot) {
     var name = snapshot.val().name;
     var destination = snapshot.val().destination;
     var time = snapshot.val().time;
     var frequency = snapshot.val().frequency;
 
 
+    var time = moment.unix(time).format("HH:MM")
+    var formattedTime = moment(time, "HH:MM").subtract(1, "years");
+   
 
-    var firstTimeConverted = moment.unix(time, "hh:mm").subtract(1, "years");
-    var currentTime = moment();
-    var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
-    var remainder = diffTime % frequency;
+    var diffTime = moment().diff(moment(formattedTime), "minutes");
+    var remainder = (diffTime - 880) % frequency;
     var minutesAway = frequency - remainder;
     console.log(minutesAway);
 
 
     var nextTrainTime = moment().add(minutesAway, "minutes");
-    var nextTrain = (nextTrainTime).format("HH:MM");
 
 
 
-// Display data in the table
-    $("#train-table > tbody").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>" +
+    // Display data in the table
+    $("#trainTable > tbody").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>" +
         frequency + "</td><td>" + nextTrain + "</td><td>" + minutesAway + "</td><td>");
 
 });
